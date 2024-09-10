@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tale Capture</title>
+    <link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='style.css') }}?v=2.5">
+</head>
+
+<body>
+
+<div class="upload-container">
+  <h2>What Have You Captured Today?</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <div class="upload-items-container">
+      <div class="upload-item">
+        <label for="file1">Picture 1:</label>
+        <input type="file" id="file1" name="file1" accept="image/*" required>
+      </div>
+      <div class="upload-item">
+        <label for="file2">Picture 2:</label>
+        <input type="file" id="file2" name="file2" accept="image/*" required>
+      </div>
+      <div class="upload-item">
+        <label for="file3">Picture 3:</label>
+        <input type="file" id="file3" name="file3" accept="image/*" required>
+      </div>
+    </div>
+    <button type="submit" class="generate-button">Create a Story!</button>
+  </form>
+</div>
+
+    <div class="story-container">
+        <h2>Your Magic Story:</h2>
+        <p id="story">Once upon a time...</p>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = async function (e) {
+            e.preventDefault();
+            
+            let formData = new FormData();
+            formData.append('file1', document.getElementById('file1').files[0]);
+            formData.append('file2', document.getElementById('file2').files[0]);
+            formData.append('file3', document.getElementById('file3').files[0]);
+
+            let response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                let data = await response.json();
+                document.getElementById('story').textContent = data.story;
+            } else {
+                document.getElementById('story').textContent = 'Error generating story!';
+            }
+        }
+    </script>
+</body>
+
+</html>
